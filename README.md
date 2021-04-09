@@ -1,1 +1,1 @@
-# ubclivingguide
+# Meal Recommender
