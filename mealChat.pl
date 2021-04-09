@@ -18,10 +18,10 @@ noun_phrase(L0,L4,Entity) :-
     noun(L2,L3,Entity),
     mp(L3,L4,Entity).
 noun_phrase(L,L,_).
-% noun_phrase(L0,L4,Entity) :-
-%     proper_noun(L0,L4,Entity).
 
 
+% A verb phrase is a adjectives followed
+% by a verb followed by an optional modifying phrase:
 verb_phrase(L0,L5,Entity) :-
     adjectives(L0,L2,Entity), 
     verb(L2,L3,Entity),
@@ -36,15 +36,15 @@ det([a | L],L,_).
 det(L,L,_).
 
 
-% adjectives(L0,L2,Entity,C0,C2) is true if 
-% L0-L2 is a sequence of adjectives imposes constraints C0-C2 on Entity
+% adjectives(L0,L2,Entity) is true if 
+% L0-L2 is a sequence of adjectives imposes Entity
 adjectives(L0,L2,Entity) :-
     adj(L0,L1,Entity),
     adjectives(L1,L2,Entity).
 adjectives(L,L,_).
 
 % An optional modifying phrase / relative clause is either
-% a relation (verb or preposition) followed by a noun_phrase or
+% a noun_phrase followed by a verb_phrase or start with 'for'
 % 'that' followed by a relation then a noun_phrase or
 % nothing 
 mp(L0,L2,Object) :-
@@ -56,18 +56,18 @@ mp([that|L0],L2,Object) :-
 mp([for|L0],L1,Object) :-
     noun_phrase(L0,L1,Object).
 mp([to|L0],L1,Object) :-
-    noun_phrase(L0,L1,Object).
+    verb_phrase(L0,L1,Object).
 mp([with|L0],L1,Object) :-
     noun_phrase(L0,L1,Object).
 mp(L,L,_).
 
-% DICTIONARY
-% adj(L0,L1,Entity,C0,C1) is true if L0-L1 
-% is an adjective that imposes constraints C0-C1 Entity
-adj([X | L],L,X) :- area(X).
-% adj([Lang,speaking | L],L,Entity) :- speaks(Entity,Lang).
-% adj([Lang,-,speaking | L],L,Entity) :- speaks(Entity,Lang).
 
+% adj(L0,L1,Entity) is true if L0-L1 
+% is an adjective that imposes entity
+adj([X | L],L,X) :- area(X).
+
+% noun(L0,L1,Entity) is true if L0-L1 
+% is an adjective that imposes entity
 noun([X | L],L,X) :- category(X).
 noun([people | L],L,_).
 noun([food | L],L,_).
@@ -76,8 +76,8 @@ noun([recipe | L],L,_).
 noun([dish | L],L,_).
 noun([meal | L],L,_).
 
-%noun([X | L],L,X) :- city(Entity).
 
+% verb is some possible word when asking, not determine true
 verb([eat | L], L,_).
 verb([drink | L], L,_).
 verb([cook | L], L,_).
@@ -85,15 +85,6 @@ verb([make | L], L,_).
 verb([do | L], L,_).
 verb([can | L], L,_).
 
-
-% Countries and languages are proper nouns.
-% We could either have it check a language dictionary or add the constraints. We chose to check the dictionary.
-proper_noun([X | L],L,X) :- country(X).
-proper_noun([X | L],L,X) :- language(X).
-
-reln([borders | L],L,O1,O2) :- borders(O1,O2).
-reln([the,capital,of | L],L,O1,O2) :- capital(O2,O1).
-reln([next,to | L],L,O1,O2) :- borders(O1,O2).
 
 % question(Question,QR,Entity) is true if Query provides an answer about Entity to Question
 question(['Is' | L0],L2,Entity) :-
@@ -132,11 +123,6 @@ ask(Q,A) :-
 %     member(End,[[],['?'],['.']]).
 
 
-% prove_all(L) is true if all elements of L can be proved from the knowledge base
-prove_all([]).
-prove_all([H|T]) :-
-    call(H),      % built-in Prolog predicate calls an atom
-    prove_all(T).
 
 
 %  The Database of Facts to be Queried
@@ -214,15 +200,13 @@ q(Ans) :-
 
 /*
 ?- q(Ans).
-Ask me: What is a country that borders chile?
-Ans = argentina ;
-Ans = peru ;
+Ask me: What can I cook for dessert?
+Ans = dessert ;
 false.
 
 ?- q(Ans).
-Ask me: What is the capital of a spanish speaking country that borders argentina?
-Ans = 'Santiago' ;
-Ans = 'Asunción' ;
+Ask me: Give me a recipe for breakfast.
+Ans = breakfast ;
 false.
 
 Some more questions:
@@ -233,6 +217,9 @@ What can I make with lamb?
 
 */
 
+%  The Database of Facts to be Queried
+
+% category(C)is true if C is a category
 category(beef).
 category(breakfast).
 category(chicken).
@@ -248,6 +235,7 @@ category(starter).
 category(vegan).
 category(vegetarian).
 
+% area(A)is true if A is an area
 area(american).
 area(british).
 area(canadian).
