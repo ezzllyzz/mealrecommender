@@ -64,11 +64,15 @@ mp(L,L,_).
 
 % adj(L0,L1,Entity) is true if L0-L1 
 % is an adjective that imposes entity
-adj([X | L],L,X) :- area(X).
-
+adj([X | L],L,MealNames) :- 
+    area(X), 
+    set_url_by_area(X, Url, MealNames).
+    
 % noun(L0,L1,Entity) is true if L0-L1 
 % is an adjective that imposes entity
-noun([X | L],L,X) :- category(X).
+oun([X | L],L,MealNames) :- 
+    category(X),
+    set_url_by_category(X, Url, MealNames).
 noun([people | L],L,_).
 noun([food | L],L,_).
 noun(["I" | L],L,_).
@@ -195,7 +199,8 @@ q(Ans) :-
     write("  "),
     write("Ask me: "), flush_output(current_output),
     readln(Ln),
-    ask(Ln,Ans).
+    ask(Ln,Ans), 
+    write(Ans).
    
 
 /*
