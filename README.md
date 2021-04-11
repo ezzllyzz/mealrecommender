@@ -1,7 +1,7 @@
 # Meal Recommender
 
 To use this program,\
-open SWI-Prolog,\
+open SWI-Prolog and consult the file,\
 type:\
 start.
 
