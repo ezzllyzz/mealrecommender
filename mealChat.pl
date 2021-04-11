@@ -281,16 +281,16 @@ reply(Re, _) :-
 % ----------------------UI part----------------
 
 start :-
-    write("\n----Welcome to the Meal Planner!----\n"),
+    write("\n----Welcome to the Meal Recommender!----\n"),
      
     write("I can help you with: "), 
     write(" \n"),    
-    write("     Suggest a meal with given  area or offer recipe if you want; \n"),
-    write("     Suggest a meal with given category or offer recipe if you want; \n"),
-    write("     Select a meal for you randomly if you have no idea about what to cook; \n"),
+    write("     Suggest a meal with a given area and offer recipe if you want; \n"),
+    write("     Suggest a meal with a given category and offer recipe if you want; \n"),
+    write("     Suggest a meal for you randomly if you have no idea about what to cook; \n"),
     write("_____PLEASE ONLY INCLUDE ONE AREA/CATEGORY TO FILTER EACH TIME _____"),
     write(" \n\n"),
-    write("You can type below to ask me: \n"),
+    write("Type your question below to ask me: \n"),
     q2.
 
 q2 :-
@@ -352,7 +352,7 @@ false.
 Some more questions:
 What can I cook for dessert?
 What do chinese people eat?
-What do I eat for dinner?
+What do I eat for starter?
 What can I make with lamb?
 
 */
