@@ -112,6 +112,10 @@ meals_to_recipe([H | T], [H.strInstructions | Recipe]) :-
     meals_to_recipe(T, Recipe).
 meals_to_recipe(null,sorry).
 
+
+%%--------------NLP system------------
+% build on to prof.Poole's class material
+
 % A noun phrase is a determiner followed by adjectives followed
 % by a noun followed by an optional modifying phrase:
 noun_phrase(L0,L4,Entity) :-
@@ -274,7 +278,7 @@ reply(Re, _) :-
 
 
 
-% To get the input from a line:
+% ----------------------UI part----------------
 
 start :-
     write("\n----Welcome to the Meal Planner!----\n"),
