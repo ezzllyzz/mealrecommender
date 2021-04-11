@@ -1,10 +1,53 @@
-:- use_module(library('http/http_client')).
-:- use_module(library('http/http_open')).
-:- use_module(library('http/http_json')).
-:- use_module(library('http/json')).
+:- use_module(library(http/http_open)).
+:- use_module(library(http/json)).
 
 %-----------API UNDER CONSTRUCTION---------------
-apiFunction1(Filter,DishName).
+% reference to https://github.com/thibaultdewit/Interactive-Tour-Guide
+% constants
+root_url("https://www.themealdb.com/api/json/v1/").
+api_key("1").
+area_url("/filter.php?a=").
+category_url("/filter.php?c=").
+
+% set urls
+% eg. https://www.themealdb.com/api/json/v1/1/filter.php?a=chinese
+set_url_by_area(Atom, Url, MealNames) :- 
+	root_url(X),
+    api_key(K),
+	area_url(A),
+	string_concat(X, K, Y),
+    string_concat(Y, A, Z),
+	string_concat(Z, Atom, Url),
+    make_api_call(Url, MealNames).
+    
+
+% eg. https://www.themealdb.com/api/json/v1/1/filter.php?c=seafood
+set_url_by_category(Atom, Url, MealNames) :- 
+	root_url(X),
+    api_key(K),
+	category_url(C),
+	string_concat(X, K, Y),
+    string_concat(Y, C, Z),
+	string_concat(Z, Atom, Url),
+    make_api_call(Url, MealNames).
+
+% makes api request
+make_api_call(URL, MealNames) :-
+	http_open(URL, In_stream, []),
+	json_read_dict(In_stream, Dict),
+	close(In_stream),
+	json_to_meals(Dict, Meals),
+    meals_to_mealnames(Meals, MealNames).
+
+% convert json to printable data
+
+% convert json dictionary to a list of meals data
+json_to_meals(Dict, Dict.meals).
+
+% convert a list of meals data to a list of names
+meals_to_mealnames([],[]).
+meals_to_mealnames([H | T], [H.strMeal | Meals]) :-
+    meals_to_mealnames(T, Meals).
 
 
 
