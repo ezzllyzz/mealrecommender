@@ -113,7 +113,7 @@ adj([X | L],L,MealNames) :-
     
 % noun(L0,L1,Entity) is true if L0-L1 
 % is an adjective that imposes entity
-oun([X | L],L,MealNames) :- 
+noun([X | L],L,MealNames) :- 
     category(X),
     set_url_by_category(X, Url, MealNames).
 noun([people | L],L,_).
