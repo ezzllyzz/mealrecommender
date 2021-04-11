@@ -8,6 +8,7 @@ root_url("https://www.themealdb.com/api/json/v1/").
 api_key("1").
 area_url("/filter.php?a=").
 category_url("/filter.php?c=").
+random_url("/random.php").
 
 % set urls
 % eg. https://www.themealdb.com/api/json/v1/1/filter.php?a=chinese
@@ -31,6 +32,16 @@ set_url_by_category(Atom, Url, MealNames) :-
 	string_concat(Z, Atom, Url),
     make_api_call(Url, MealNames).
 
+% eg. https://www.themealdb.com/api/json/v1/1/random.php
+set_url_by_random(Url, MealNames) :-
+    root_url(X),
+    api_key(K),
+	random_url(C),
+	string_concat(X, K, Y),
+    string_concat(Y, C, Url),
+    make_api_call(Url, MealNames).
+
+
 % makes api request
 make_api_call(URL, MealNames) :-
 	http_open(URL, In_stream, []),
@@ -48,10 +59,6 @@ json_to_meals(Dict, Dict.meals).
 meals_to_mealnames([],[]).
 meals_to_mealnames([H | T], [H.strMeal | Meals]) :-
     meals_to_mealnames(T, Meals).
-
-
-
-
 
 % A noun phrase is a determiner followed by adjectives followed
 % by a noun followed by an optional modifying phrase:
@@ -110,6 +117,8 @@ mp(L,L,_).
 adj([X | L],L,MealNames) :- 
     area(X), 
     set_url_by_area(X, Url, MealNames).
+adj([random | L],L,MealNames) :- 
+    set_url_by_random(Url, MealNames).
     
 % noun(L0,L1,Entity) is true if L0-L1 
 % is an adjective that imposes entity
@@ -122,6 +131,8 @@ noun(["I" | L],L,_).
 noun([recipe | L],L,_).
 noun([dish | L],L,_).
 noun([meal | L],L,_).
+noun([meals | L],L,_).
+noun([you | L],L,_).
 
 
 % verb is some possible word when asking, not determine true
@@ -131,6 +142,8 @@ verb([cook | L], L,_).
 verb([make | L], L,_).
 verb([do | L], L,_).
 verb([can | L], L,_).
+verb([have | L], L,_).
+verb([suggest | L], L,_).
 
 
 % question(Question,QR,Entity) is true if Query provides an answer about Entity to Question
@@ -163,71 +176,6 @@ question(['How',to | L0], L2, Entity) :-
 ask(Q,A) :-
     question(Q,End,A),
     member(End,[[],['?'],['.']]).
-
-% get_constraints_from_question(Q,A,C) is true if C is the constraints on A to infer question Q
-% get_constraints_from_question(Q,A,) :-
-%     question(Q,End,A),
-%     member(End,[[],['?'],['.']]).
-
-
-
-
-%  The Database of Facts to be Queried
-
-% country(C) is true if C is a country
-country(argentina).
-country(brazil).
-country(chile).
-country(paraguay).
-country(peru).
-
-% large(C) is true if the area of C is greater than 2m km^2
-large(brazil).
-large(argentina).
-
-% language(L) is true if L is a language
-language(spanish).
-language(portugese).
-
-% speaks(Country,Lang) is true of Lang is an official language of Country
-speaks(argentina,spanish).
-speaks(brazil,portugese).
-speaks(chile,spanish).
-speaks(paraguay,spanish).
-speaks(peru,spanish).
-
-capital(argentina,'Buenos Aires').
-capital(chile,'Santiago').
-capital(peru,'Lima').
-capital(brazil,'Brasilia').
-capital(paraguay,'Asunción').
-
-% borders(C1,C2) is true if country C1 borders country C2
-borders(peru,chile).
-borders(chile,peru).
-borders(argentina,chile).
-borders(chile,argentina).
-borders(brazil,peru).
-borders(peru,brazil).
-borders(argentina,brazil).
-borders(brazil,argentina).
-borders(brazil,paraguay).
-borders(paraguay,brazil).
-borders(argentina,paraguay).
-borders(paraguay,argentina).
-
-/* Try the following queries:
-?- ask(['What',is,a,country],A).
-?- ask(['What',is,a,spanish,speaking,country],A).
-?- ask(['What',is,the,capital,of, chile],A).
-?- ask(['What',is,the,capital,of, a, country],A).
-?- ask(['What',is, a, country, that, borders,chile],A).
-?- ask(['What',is, a, country, that, borders,a, country,that,borders,chile],A).
-?- ask(['What',is,the,capital,of, a, country, that, borders,chile],A).
-?- ask(['What',country,borders,chile],A).
-?- ask(['What',country,that,borders,chile,borders,paraguay],A).
-*/
-
 
 % To get the input from a line:
 
